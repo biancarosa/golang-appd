@@ -38,6 +38,10 @@ func AppDynamicsMiddleware() func(*gin.Context) {
 
 		// Start a AppDynamics business transaction
 		btHandle := appd.StartBT(route, "")
+		for k := range c.Params {
+			p := c.Params[k]
+			appd.AddUserDataToBT(btHandle, p.Key, p.Value)
+		}
 
 		// Call pending handlers
 		c.Next()
