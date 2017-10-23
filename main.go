@@ -46,7 +46,14 @@ func AppDynamicsMiddleware() func(*gin.Context) {
 		// Call pending handlers
 		c.Next()
 
-		fmt.Printf("%#v", c.Writer.Status())
+		status := c.Writer.Status()
+		if status > 200 {
+			if status > 500 {
+				appd.AddBTError(btHandle, appd.APPD_LEVEL_ERROR, "500", true)
+			} else {
+				appd.AddBTError(btHandle, appd.APPD_LEVEL_WARNING, "500", false)
+			}
+		}
 
 		// End and save the business transaction
 		appd.EndBT(btHandle)
